@@ -1,5 +1,4 @@
 #include "assembler.h"
-#include <fstream>
 
 using namespace std;
 
@@ -49,17 +48,45 @@ void Assembler::parseLine(const string& line)
     }
 }
 
-void Assembler::parseRegister(const string& line, int i)
+void Assembler::parseRegister(const string& line, unsigned int i)
 {
     if (i < line.length() && line[i] >= '0' && line[i] <= '7')
     {
-        Token t;
-        t.isImmediate = false;
-        t.value = line[i] - '0'; //Convert ascii to int
-        tokenStack.push(t)
+        Token t = {
+            .isImmediate = false,
+            .value = static_cast<uint32_t>(line[i] - '0') //Convert ascii to int
+        };
+        tokenStack.push(t);
     }
     else
     {
         throw invalid_argument("Invalid register.");
     }
+}
+
+unsigned int Assembler::parseImmediate(const string& line, const unsigned int start)
+{
+    unsigned int length = 1; //Number of chars in int
+    for (unsigned int i = start + 1; i < line.length(); i++)
+    {
+        char c = line[i];
+        if (isspace(c) || c == '#')
+        {
+            break;
+        }
+        else if (!isdigit(c))
+        {
+            throw invalid_argument("Invalid immediate value");
+        }
+        
+        length++;
+    }
+    
+    string intString = line.substr(start, length);
+    Token immed = {
+        .isImmediate = true,
+        .value = static_cast<uint32_t>(stoul(intString))
+    };
+    
+    return start + length;
 }
