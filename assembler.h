@@ -36,5 +36,8 @@ private:
     //Returns the index of the last char of the operation within the line.
     unsigned int parseOperation(const std::string& line, unsigned int start);
     
+    //Writes the binary instruction code to the file
+    void createInstruction(string op);
+    
     std::stack<Token> tokenStack;
 };

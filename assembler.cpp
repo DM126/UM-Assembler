@@ -28,6 +28,7 @@ void Assembler::readInput(ifstream& infile)
 
 void Assembler::parseLine(const string& line)
 {
+    bool operationFound = false; //True once the operation is found. Anything after the operation will cause an error.
     for (unsigned int i = 0; i < line.length(); i++)
     {
         if (!isspace(line[i]))
@@ -48,6 +49,7 @@ void Assembler::parseLine(const string& line)
             else
             {
                 parseOperation(line, i);
+                operationFound = true;
             }
         }
     }
@@ -99,5 +101,27 @@ unsigned int Assembler::parseImmediate(const string& line, const unsigned int st
 
 void Assembler::parseOperation(const string& line , unsigned int start)
 {
+    //TODO This is almost an exact duplicate of parseImmediate.
+    //Could pass a function pointer of the stl function to a generic function...
     
+    unsigned int length = 1; //Number of chars in int
+    for (unsigned int i = start + 1; i < line.length(); i++)
+    {
+        char c = line[i];
+        if (isspace(c) || c == '#')
+        {
+            break;
+        }
+        else if (!isalpha(c))
+        {
+            throw invalid_argument("Invalid operation value");
+        }
+        
+        length++;
+    }
+    
+    string operation = line.substr(start, length);
+    createInstruction(operation);
+    
+    return start + length - 1;
 }
