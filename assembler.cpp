@@ -39,10 +39,15 @@ void Assembler::parseLine(const string& line)
             else if (isdigit(line[i])) //Immediate value
             {
                 parseImmediate(line, i);
+                i++ //Skip number
             }
             else if (line[i] == 'r' || line[i] == 'R') //Register
             {
-                parseRegister(line, i+1);
+                i = parseRegister(line, i+1);
+            }
+            else
+            {
+                parseOperation(line, i);
             }
         }
     }
@@ -89,5 +94,10 @@ unsigned int Assembler::parseImmediate(const string& line, const unsigned int st
     };
     tokenStack.push(immed);
     
-    return start + length;
+    return start + length - 1;
+}
+
+void Assembler::parseOperation(const string& line , unsigned int start)
+{
+    
 }
