@@ -2,5 +2,5 @@
 
 int main()
 {
-    return 0;
+    Assembler("input.umasm");
 }
