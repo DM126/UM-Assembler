@@ -87,6 +87,7 @@ unsigned int Assembler::parseImmediate(const string& line, const unsigned int st
         .isImmediate = true,
         .value = static_cast<uint32_t>(stoul(intString))
     };
+    tokenStack.push(immed);
     
     return start + length;
 }
