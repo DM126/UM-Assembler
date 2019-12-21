@@ -37,6 +37,10 @@ void Assembler::parseLine(const string& line)
             {
                 break;
             }
+            else if (operationFound) //If operation already found, throw an exception.
+            {
+                throw invalid_argument("Error: Encountered a symbol after operation.")
+            }
             else if (isdigit(line[i])) //Immediate value
             {
                 i = parseImmediate(line, i);
@@ -128,5 +132,11 @@ unsigned int Assembler::parseOperation(const string& line , unsigned int start)
 
 void Assembler::createInstruction(const string& op)
 {
-    
+    for (int i = 0; i < NUM_OPERATIONS; i++)
+    {
+        if (op == operations[i])
+        {
+            
+        }
+    }
 }

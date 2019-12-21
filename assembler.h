@@ -4,6 +4,7 @@
 #include <string>
 
 //Operation mnemonics
+const static int NUM_OPERATIONS = 14;
 const static std::string operations[] = {"CMOV", "INDEX", "AMEND", "ADD", "MUL", 
                                         "DIV", "NAND", "HALT", "ALLOC", "ABAND", 
                                         "OUT", "IN", "LOAD", "ORTH"};
