@@ -33,7 +33,7 @@ void Assembler::parseLine(const string& line)
     {
         if (!isspace(line[i]))
         {
-            if (line[i] == '#') //Comment
+            if (line[i] == COMMENT) //Comment
             {
                 break;
             }
@@ -81,7 +81,7 @@ unsigned int Assembler::parseImmediate(const string& line, const unsigned int st
     for (unsigned int i = start + 1; i < line.length(); i++)
     {
         char c = line[i];
-        if (isspace(c) || c == '#')
+        if (isspace(c) || c == COMMENT)
         {
             break;
         }
@@ -112,7 +112,7 @@ unsigned int Assembler::parseOperation(const string& line , unsigned int start)
     for (unsigned int i = start + 1; i < line.length(); i++)
     {
         char c = line[i];
-        if (isspace(c) || c == '#')
+        if (isspace(c) || c == COMMENT)
         {
             break;
         }

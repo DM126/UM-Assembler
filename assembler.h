@@ -46,4 +46,7 @@ private:
     void createInstruction(const std::string& op);
     
     std::stack<Token> tokenStack;
+    
+    //Symbol to begin a comment
+    const char COMMENT = "#";
 };
