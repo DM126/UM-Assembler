@@ -3,6 +3,11 @@
 #include <stack>
 #include <string>
 
+//Operation mnemonics
+const static std::string operations[] = {"CMOV", "INDEX", "AMEND", "ADD", "MUL", 
+                                        "DIV", "NAND", "HALT", "ALLOC", "ABAND", 
+                                        "OUT", "IN", "LOAD", "ORTH"};
+
 struct Token
 {
     bool isImmediate; //True if immediate, false if register
@@ -37,7 +42,7 @@ private:
     unsigned int parseOperation(const std::string& line, unsigned int start);
     
     //Writes the binary instruction code to the file
-    void createInstruction(string op);
+    void createInstruction(const std::string& op);
     
     std::stack<Token> tokenStack;
 };

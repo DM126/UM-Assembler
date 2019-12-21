@@ -39,16 +39,16 @@ void Assembler::parseLine(const string& line)
             }
             else if (isdigit(line[i])) //Immediate value
             {
-                parseImmediate(line, i);
-                i++ //Skip number
+                i = parseImmediate(line, i);
             }
             else if (line[i] == 'r' || line[i] == 'R') //Register
             {
-                i = parseRegister(line, i+1);
+                parseRegister(line, i+1);
+                i++; //Skip number
             }
             else
             {
-                parseOperation(line, i);
+                i = parseOperation(line, i);
                 operationFound = true;
             }
         }
@@ -99,7 +99,7 @@ unsigned int Assembler::parseImmediate(const string& line, const unsigned int st
     return start + length - 1;
 }
 
-void Assembler::parseOperation(const string& line , unsigned int start)
+unsigned int Assembler::parseOperation(const string& line , unsigned int start)
 {
     //TODO This is almost an exact duplicate of parseImmediate.
     //Could pass a function pointer of the stl function to a generic function...
@@ -124,4 +124,9 @@ void Assembler::parseOperation(const string& line , unsigned int start)
     createInstruction(operation);
     
     return start + length - 1;
+}
+
+void Assembler::createInstruction(const string& op)
+{
+    
 }
