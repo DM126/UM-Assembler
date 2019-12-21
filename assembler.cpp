@@ -4,6 +4,8 @@ using namespace std;
 
 Assembler::Assembler(const string& fileName)
 {
+    ofstream outfile("um.o", ios::binary);
+    
     ifstream infile(fileName);
     if (infile.fail())
 	{
@@ -13,6 +15,9 @@ Assembler::Assembler(const string& fileName)
 	{
 		readInput(infile);
 	}
+    
+    infile.close();
+    outfile.close();
 }
 
 void Assembler::readInput(ifstream& infile)
@@ -39,7 +44,7 @@ void Assembler::parseLine(const string& line)
             }
             else if (operationFound) //If operation already found, throw an exception.
             {
-                throw invalid_argument("Error: Encountered a symbol after operation.")
+                throw invalid_argument("Error: Encountered a symbol after operation.");
             }
             else if (isdigit(line[i])) //Immediate value
             {

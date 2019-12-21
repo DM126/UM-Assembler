@@ -20,6 +20,9 @@ class Assembler
 public:
     Assembler(const std::string& filename);
 
+    //Symbol to begin a comment
+    const char COMMENT = '#';
+
 private:
     void readInput(std::ifstream& infile);
     void parseLine(const std::string& line);
@@ -47,6 +50,6 @@ private:
     
     std::stack<Token> tokenStack;
     
-    //Symbol to begin a comment
-    const char COMMENT = "#";
+    //Binary output file
+    std::ofstream outfile;
 };
