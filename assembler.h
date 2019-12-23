@@ -5,9 +5,19 @@
 
 //Operation mnemonics
 const static int NUM_OPERATIONS = 14;
+const static int OPCODE_BITS = 4; //bits required to identify the 14 operations
 const static std::string operations[] = {"CMOV", "INDEX", "AMEND", "ADD", "MUL", 
                                         "DIV", "NAND", "HALT", "ALLOC", "ABAND", 
                                         "OUT", "IN", "LOAD", "ORTH"};
+                                        
+//TODO make operation struct, then use just one array
+
+//The number of registers each operation uses. Compared with the size of the 
+//token stack when creating the binary instruction code.
+const static int REGISTER_BITS = 3; //bits required to identify the 8 registers
+const static int registers[] = {3, 3, 3, 3, 3,
+                                3, 3, 0, 3, 1,
+                                1, 1, 2, 2};
 
 struct Token
 {
@@ -22,6 +32,8 @@ public:
 
     //Symbol to begin a comment
     const char COMMENT = '#';
+    
+    const int BITS_PER_WORD = 32;
 
 private:
     void readInput(std::ifstream& infile);
@@ -47,6 +59,9 @@ private:
     
     //Writes the binary instruction code to the file
     void createInstruction(const std::string& op);
+    
+    //Removes and returns the token on top of the token stack
+    Token popStack();
     
     std::stack<Token> tokenStack;
     

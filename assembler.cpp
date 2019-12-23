@@ -4,7 +4,7 @@ using namespace std;
 
 Assembler::Assembler(const string& fileName)
 {
-    ofstream outfile("um.o", ios::binary);
+    outfile = ofstream("um.o", ios::binary);
     
     ifstream infile(fileName);
     if (infile.fail())
@@ -31,6 +31,7 @@ void Assembler::readInput(ifstream& infile)
     }
 }
 
+//TODO Throw exception if no operation found
 void Assembler::parseLine(const string& line)
 {
     bool operationFound = false; //True once the operation is found. Anything after the operation will cause an error.
@@ -136,12 +137,64 @@ unsigned int Assembler::parseOperation(const string& line , unsigned int start)
 }
 
 void Assembler::createInstruction(const string& op)
-{
+{   
+    int filler = 1;
+    
     for (int i = 0; i < NUM_OPERATIONS; i++)
     {
         if (op == operations[i])
         {
+            if (tokenStack.size() != registers[i])
+            {
+                //TODO Be more descriptive? Refactor?
+                throw invalid_argument("Incorrect number of arguments for " + operations[i]);
+            }
             
+            outfile.write((char*)&i, OPCODE_BITS); //opcode
+            
+            if (operations[i] == "ORTH") //Special immediate load instruction
+            {
+                Token regist = popStack();
+                Token immed = popStack();
+                if (!regist.isImmediate && immed.isImmediate)
+                {
+                    outfile.write((char*)&regist.value, REGISTER_BITS);
+                    outfile.write((char*)&immed.value, BITS_PER_WORD - OPCODE_BITS - REGISTER_BITS);
+                }
+                else
+                {
+                    throw invalid_argument("ORTH Must have an immediate followed by a register.");
+                }
+            }
+            else
+            {
+                //Write the filler bits not used by opcode or registers.
+                outfile.write((char*)&filler, BITS_PER_WORD - REGISTER_BITS - registers[i] * REGISTER_BITS);
+                
+                while (!tokenStack.empty())
+                {
+                    Token t = popStack();
+                    
+                    if (!t.isImmediate)
+                    {
+                        outfile.write((char*)&t.value, REGISTER_BITS);
+                    }
+                    else
+                    {
+                        throw invalid_argument("Argument must be a register.");
+                    }
+                }
+            }
+            
+            break;
         }
     }
+}
+
+Token Assembler::popStack()
+{
+    Token t = tokenStack.top();
+    tokenStack.pop();
+    
+    return t;
 }
