@@ -137,8 +137,8 @@ unsigned int Assembler::parseOperation(const string& line , unsigned int start)
 }
 
 void Assembler::createInstruction(const string& op)
-{   
-    int filler = 1;
+{
+    uint32_t instruction = 0;
     
     for (int i = 0; i < NUM_OPERATIONS; i++)
     {
@@ -150,7 +150,7 @@ void Assembler::createInstruction(const string& op)
                 throw invalid_argument("Incorrect number of arguments for " + operations[i]);
             }
             
-            outfile.write((char*)&i, OPCODE_BITS); //opcode
+            instruction = (i << BITS_PER_WORD - OPCODE_BITS); //opcode
             
             if (operations[i] == "ORTH") //Special immediate load instruction
             {
@@ -158,8 +158,9 @@ void Assembler::createInstruction(const string& op)
                 Token immed = popStack();
                 if (!regist.isImmediate && immed.isImmediate)
                 {
-                    outfile.write((char*)&regist.value, REGISTER_BITS);
-                    outfile.write((char*)&immed.value, BITS_PER_WORD - OPCODE_BITS - REGISTER_BITS);
+                    instruction += (regist.value << BITS_PER_WORD - OPCODE_BITS - REGISTER_BITS);
+                    //TODO Error check if immed.value >= 2^25?
+                    instruction += (immed.value & 0b00000001111111111111111111111111); //Must fit into 25 bits
                 }
                 else
                 {
@@ -168,8 +169,8 @@ void Assembler::createInstruction(const string& op)
             }
             else
             {
-                //Write the filler bits not used by opcode or registers.
-                outfile.write((char*)&filler, BITS_PER_WORD - REGISTER_BITS - registers[i] * REGISTER_BITS);
+                //Filler bits not used by opcode or registers.
+                //instruction += 0b00001111111111111111111000000000;
                 
                 while (!tokenStack.empty())
                 {
@@ -177,7 +178,7 @@ void Assembler::createInstruction(const string& op)
                     
                     if (!t.isImmediate)
                     {
-                        outfile.write((char*)&t.value, REGISTER_BITS);
+                        instruction += (t.value << tokenStack.size() * REGISTER_BITS);
                     }
                     else
                     {
@@ -189,6 +190,8 @@ void Assembler::createInstruction(const string& op)
             break;
         }
     }
+    
+    outfile.write((char*)&instruction, 4); //4 bytes per word
 }
 
 Token Assembler::popStack()
