@@ -8,13 +8,13 @@ Assembler::Assembler(const string& fileName)
     
     ifstream infile(fileName);
     if (infile.fail())
-	{
-		throw runtime_error("Error: Could not find file: " + fileName);
-	}
-	else
-	{
-		readInput(infile);
-	}
+    {
+        throw runtime_error("Error: Could not find file: " + fileName);
+    }
+    else
+    {
+        readInput(infile);
+    }
     
     infile.close();
     outfile.close();
